@@ -44,6 +44,7 @@ public class UDPClient {
 
         Thread.sleep(2000); // wait for 2 seconds
 
-		clientSocket.close();
+	clientSocket.close();
+		
 	}
 }
