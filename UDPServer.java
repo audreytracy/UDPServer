@@ -22,7 +22,6 @@ public class UDPServer {
             Runnable clientHandler = new MessageThread(serverSocket, receivePacket);
             Thread thread = new Thread(clientHandler); // start new thread for each message
             thread.start();
-
 		}
 	}
 
@@ -30,8 +29,6 @@ public class UDPServer {
         return ++totalMessages; // increment shared resource totalMessages within synchronized method to handle race conditions
     }
 
-    
-    
     static class MessageThread implements Runnable {
 
         private DatagramPacket packet;
@@ -47,7 +44,6 @@ public class UDPServer {
         @Override
         public void run() {
 
-     
             try {
                 
                 String message = new String(packet.getData()).trim(); // remove whitespace
@@ -63,7 +59,7 @@ public class UDPServer {
                 System.out.println(clientID + " MESSAGE: " + message);
                 System.out.println("\tTotal Messages: " + totalMessages);
 
-                sendData = message.getBytes();
+                sendData = message.getBytes();     
 
                 sendData = ("Total Messages: " + totalMessages).getBytes();
 
