@@ -4,26 +4,24 @@ import java.net.*;
 
 public class UDPServer {
 
-    private static int totalMessages = 0;
-
-	public static void main(String args[]) throws Exception {
+    private static int totalMessages = 0; // shared resource
+    
+    public static void main(String args[]) throws Exception {
 
         int port = 6789;
+	DatagramSocket serverSocket = new DatagramSocket(port);
+	System.out.println("The UDP Server is on.");
+	byte[] receiveData;
 
-		DatagramSocket serverSocket = new DatagramSocket(port);
-		System.out.println("The UDP Server is on.");
-
-		byte[] receiveData;
-
-		while (true) {
+	while (true) {
             receiveData = new byte[1024];
-			DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-			serverSocket.receive(receivePacket); // receive new message
+	    DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+	    serverSocket.receive(receivePacket); // receive new message
             Runnable clientHandler = new MessageThread(serverSocket, receivePacket);
             Thread thread = new Thread(clientHandler); // start new thread for each message
             thread.start();
-		}
-	}
+	}    
+    }
 
     public static synchronized int messageIncrement() {
         return ++totalMessages; // increment shared resource totalMessages within synchronized method to handle race conditions
@@ -33,7 +31,7 @@ public class UDPServer {
 
         private DatagramPacket packet;
         byte[] receiveData = new byte[1024];
-		byte[] sendData = new byte[1024];
+	byte[] sendData = new byte[1024];
         DatagramSocket socket;
 
         public MessageThread(DatagramSocket socket, DatagramPacket packet) {
@@ -43,33 +41,24 @@ public class UDPServer {
 
         @Override
         public void run() {
-
             try {
-                
                 String message = new String(packet.getData()).trim(); // remove whitespace
-
                 InetAddress IPAddress = packet.getAddress();
-
                 int clientPort = packet.getPort();
-
                 String clientID = "[" + IPAddress.toString().substring(1) + ":" + clientPort + "]";
-            
                 int totalMessages = UDPServer.messageIncrement(); // increment shared resource totalMessages
-
                 System.out.println(clientID + " MESSAGE: " + message);
                 System.out.println("\tTotal Messages: " + totalMessages);
-
                 sendData = message.getBytes();     
-
                 sendData = ("Total Messages: " + totalMessages).getBytes();
-
                 DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, clientPort);
-
                 socket.send(sendPacket);
             }
-            catch (IOException e) {
+	    catch (IOException e) {
                 System.err.println(e.getMessage());
             }
-        }
-    }
-}
+	} // end run() method
+	    
+    } // end MessageThread class
+	
+} // end UDPServer class
