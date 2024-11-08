@@ -8,21 +8,19 @@ public class UDPServer {
 
 	public static void main(String args[]) throws Exception {
 
-
         int port = 6789;
 
 		DatagramSocket serverSocket = new DatagramSocket(port);
 		System.out.println("The UDP Server is on.");
 
-		// byte[] receiveData = new byte[1024];
-		// byte[] sendData = new byte[1024];
+		byte[] receiveData;
 
 		while (true) {
-            byte[] receiveData = new byte[1024];
+            receiveData = new byte[1024];
 			DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 			serverSocket.receive(receivePacket); // receive new message
             Runnable clientHandler = new MessageThread(serverSocket, receivePacket);
-            Thread thread = new Thread(clientHandler); // start new thread for client
+            Thread thread = new Thread(clientHandler); // start new thread for each message
             thread.start();
 
 		}
@@ -52,7 +50,7 @@ public class UDPServer {
      
             try {
                 
-                String message = new String(packet.getData()).trim();
+                String message = new String(packet.getData()).trim(); // remove whitespace
 
                 InetAddress IPAddress = packet.getAddress();
 

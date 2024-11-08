@@ -14,7 +14,6 @@ public class UDPClient {
 
 		DatagramSocket clientSocket = new DatagramSocket();
 
-
 		InetAddress IPAddress = InetAddress.getByName("localhost");
 
 		byte[] sendData = new byte[1024];
@@ -34,26 +33,15 @@ public class UDPClient {
     
             clientSocket.receive(receivePacket);
     
-            reply = new String(receivePacket.getData()).trim();
+            reply = new String(receivePacket.getData()).trim(); // remove whitespace from extra space in bytes array
     
             System.out.println("FROM SERVER:" + reply);
             message = userInput.readLine();
 
         }
 
+        Thread.sleep(2000); // wait for 2 seconds
+
 		clientSocket.close();
 	}
 }
-
-/**
- * Implementing a simple UDP server and UDP clients to fulfill the same function as the project1 with some minor differences.
-1.	Creating one thread for one message instead of one client. 
-2.	When “exit” is entered on a client, the client just needs to close its socket. It doesn’t need send this “exit” message to the server because the server uses one thread for one message with the UDP socket.  
-
-Requirements:
-1.	Please submit a compressed file which contains your source code and a document. In the document, please include screenshots on how multiple clients interact with your servers. 
-2.	Please make sure your code is executable. You can also provide a simple README on how to run your code. 
-3.	Please comment your source code briefly.
-4.	Remember to use try and catch to deal with exceptions.
-
- */
